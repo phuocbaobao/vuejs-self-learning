@@ -1,9 +1,16 @@
 <template>
   <md-card
     class="md-card"
-    v-bind:style="[isChecked ? {'background-color': 'currentColor'} : {'background-color': 'white'}]"
+    md-with-hover
+    v-bind:style="[
+      isChecked
+        ? { 'background-color': 'currentColor' }
+        : { 'background-color': 'white' }
+    ]"
   >
-    <md-checkbox v-model="isChecked">{{ film }}</md-checkbox>
+    <md-checkbox v-model="isChecked" @change="onItemChecked">{{
+      film
+    }}</md-checkbox>
   </md-card>
 </template>
 
@@ -13,7 +20,17 @@ import { Vue, Component, Prop } from "vue-property-decorator";
 @Component
 export default class Question extends Vue {
   @Prop() film!: String;
+  @Prop() maxTimes!: number;
   isChecked: boolean = false;
+
+  onItemChecked(): void {
+    if (this.maxTimes == 3) this.isChecked = false;
+    const data = {
+      isChecked: this.isChecked,
+      film: this.film
+    };
+    this.$emit("change", data);
+  }
 }
 </script>
 
@@ -36,8 +53,15 @@ export default class Question extends Vue {
 }
 
 .md-checkbox >>> label {
+  display: flex;
+  position: absolute;
+  height: 100%;
+  top: 0;
+  margin-left: 16px;
+  padding-right: 16px;
+  align-items: center;
+  width: 100%;
   text-align: left;
-  display: inline-table;
 }
 
 .md-checkbox >>> .md-checkbox-container {
@@ -57,6 +81,8 @@ export default class Question extends Vue {
 @media (max-width: 599px) {
   .md-card {
     padding-left: 10px !important;
+    padding-top: 16px;
+    padding-bottom: 16px;
   }
 }
 </style>
